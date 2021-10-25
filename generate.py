@@ -40,7 +40,7 @@ notebook = {
         'title: <required-title>\n',
         f'date: {today}\n',
         'downloads: true\n',
-        'sidebar: true\n',
+        'weight: <required-weight> See: https://github.com/pytorch-ignite/examples/issues/30\n',
         'summary: <delete if there is <!--more--> else required\n'
         'tags:\n',
         '  - <required-tag>\n',
@@ -66,6 +66,21 @@ if __name__ == '__main__':
   )
   args = parser.parse_args()
   for name in args.notebook_names:
-    with open(name, 'w') as fp:
-      json.dump(notebook, fp, indent=2)
-      print(f'Generated {os.path.join(cwd, name)}')
+    if os.path.isfile(name):
+      with open(name) as fp:
+        content = json.load(fp)
+
+      for key, value in content.items():
+        if key != 'cells':
+          content[key] = notebook[key]
+        else:
+          content[key] = notebook[key] + content[key]
+
+      with open(name, mode='w') as f:
+        f.write(json.dumps(content, indent=2))
+        print(f'Added frontmatter to {os.path.join(cwd, name)}')
+
+    else:
+      with open(name, 'w') as fp:
+        json.dump(notebook, fp, indent=2)
+        print(f'Generated {os.path.join(cwd, name)}')
