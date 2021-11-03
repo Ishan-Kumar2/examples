@@ -1,8 +1,8 @@
 name: Generate script tests
 on: [push]
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  Run-Tests:
+  runs-on: ubuntu-latest
   steps:
     - name: Install dependencies
       run: |
